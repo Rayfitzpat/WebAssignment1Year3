@@ -11,7 +11,7 @@ $app = AppFactory::Create();
 // Add error middleware
 $app->addErrorMiddleware(true, true, true);
 $app->addBodyParsingMiddleware(); // <<<---- here
-$app->setBasePath("/webdev3/Slim-Cellar-Demo/rest-cellar-demo/public");
+$app->setBasePath("\webDev3\Assignment1\WebAssignment1Year3");
 
 // Add routes
 $app->get('/', function (Request $request, Response $response) {
@@ -69,37 +69,37 @@ $app->delete('/film/{id}', function (Request $request, Response $response, $args
     if ($delete_count) {
         return $response->withJson(array($delete_count), 204);
     } else {
-        return $response->withJson(array("Unable to delete film with id: " . $id), 404); // can't find wine
+        return $response->withJson(array("Unable to delete film with id: " . $id), 404); // can't find film
     }
 
 });
 ******************************************************
-// Get wine with a search term
-$app->get('/wine/search/{search}', function (Request $request, Response $response, $args) {
+// Get film with a search term
+$app->get('/film/search/{search}', function (Request $request, Response $response, $args) {
 
     require_once('database.php');
-    // Get wine with ID
+    // Get film with ID
     $search = $args['search'];
-    $query = "SELECT * FROM wine WHERE name LIKE '%$search%'";
-    $wine = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+    $query = "SELECT * FROM filmList WHERE name LIKE '%$search%'";
+    $film = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
 
-    if (count($wine)) {
-        return $response->withJson($wine, 200);
+    if (count($film)) {
+        return $response->withJson($film, 200);
     } else {
-        return $response->withJson(array("Unable to find wine with term: " . $search), 404);
+        return $response->withJson(array("Unable to find film with term: " . $search), 404);
     }
 
 });
 
-/* Add new wine using JSON
+/* Add new film using JSON
  *  {
  *     
  *   }
  */ 
-$app->post('/wine', function (Request $request, Response $response, $args) {
+$app->post('/film', function (Request $request, Response $response, $args) {
 
     require_once('database.php');
-    // Get wine details
+    // Get film details
     $json = $request->getBody();
     $data = json_decode($json, true); // parse the JSON into an assoc. array
 
@@ -114,7 +114,7 @@ $app->post('/wine', function (Request $request, Response $response, $args) {
        
   
 
-    $query = "INSERT INTO wine (name, year, grapes, country, region, description, picture)  VALUES ('$name', '$year', '$grapes', '$country', '$region', '$description', '$picture')";
+    $query = "INSERT INTO filmList (name, year, grapes, country, region, description, picture)  VALUES ('$name', '$year', '$grapes', '$country', '$region', '$description', '$picture')";
     $response->getBody()->write("$query");
     return $response;
     $insert_count = $db->exec($query);
@@ -122,21 +122,21 @@ $app->post('/wine', function (Request $request, Response $response, $args) {
     if ($insert_count) {
         return $response->withJson(array($insert_count), 201);
     } else {
-        return $response->withJson(array("Unable to save new wine with these details: name: " . $name . "year: " . $year . "grapes: " . $grapes . "country: ". $country . "region: ". $region . "description: " . $description . "picture :" . $picture), 500); // can't save wine
+        return $response->withJson(array("Unable to save new film with these details: name: " . $name . "year: " . $year . "grapes: " . $grapes . "country: ". $country . "region: ". $region . "description: " . $description . "picture :" . $picture), 500); // can't save film
     }
 
 });
 
-/* Update new wine using JSON
+/* Update new film using JSON
  *  {
  *      "make": "Ferrari",
  *      "model": "Enzo"
  *   }
  */
-$app->put('/wine/{id}', function (Request $request, Response $response, $args) {
+$app->put('/film/{id}', function (Request $request, Response $response, $args) {
 
     require_once('database.php');
-    // Get wine details
+    // Get film details
     $json = $request->getBody();
     $data = json_decode($json, true); // parse the JSON into an assoc. array
 
@@ -144,13 +144,13 @@ $app->put('/wine/{id}', function (Request $request, Response $response, $args) {
     $make = $data["make"];
     $model = $data["model"];
 
-    $query = "UPDATE wine set make = '$make', model = '$model' WHERE ID = '$id'";
+    $query = "UPDATE filmList set make = '$make', model = '$model' WHERE ID = '$id'";
     $update_count = $db->exec($query);
 
     if ($update_count) {
         return $response->withJson(array($update_count), 200);
     } else {
-        return $response->withJson(array("Unable to update wine with id: " . $id), 404); // can't find wine
+        return $response->withJson(array("Unable to update film with id: " . $id), 404); // can't find film
     }
 
 });
